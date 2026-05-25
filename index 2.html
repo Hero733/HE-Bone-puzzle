@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>He Bone Puzzle%</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Kanit', sans-serif; background-color: #0f172a; color: white; overflow-x: hidden; }
+        .pixel-font { font-family: 'Press Start 2P', cursive; }
+        .hero-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .choice-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255,255,255,0.05); }
+        .choice-btn:hover { transform: translateY(-2px); background: #3b82f6; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5); }
+        
+        /* Glitch Animation */
+        .glitch { position: relative; animation: glitch 1s linear infinite; }
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px, 0) skew(0deg); }
+            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+            62% { transform: translate(0, 0) skew(5deg); }
+        }
+        .screen { display: none; }
+        .screen.active { display: flex; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div id="loader" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center hidden">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+    </div>
+
+    <div id="screen-login" class="screen active min-h-screen flex items-center justify-center p-4">
+        <div class="hero-card w-full max-w-md p-8 rounded-3xl shadow-2xl text-center border-t-4 border-blue-500">
+            <div class="mb-8">
+                <div class="w-20 h-20 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-900/50">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                </div>
+                <h1 class="text-3xl font-bold mb-2">Bone Quiz Online</h1>
+                <p class="text-slate-400">เข้าใช้งานด้วยอีเมลของโรงเรียนเท่านั้น</p>
+            </div>
+            
+            <div id="g_id_onload"
+                 data-client_id="802485672001-7tuhmifm1ph2mb09hle6r6hf0tahu9gv.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin flex justify-center" data-type="standard" data-shape="pill" data-theme="filled_blue" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+            
+            <p id="login-error" class="text-red-400 mt-4 text-sm hidden">กรุณาใช้อีเมล @ntun.ac.th เท่านั้น</p>
+        </div>
+    </div>
+
+    <div id="screen-lobby" class="screen min-h-screen flex-col items-center justify-center p-4">
+        <div class="hero-card w-full max-w-2xl p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center gap-3">
+                    <img id="user-img" class="w-12 h-12 rounded-full border-2 border-blue-500" src="" alt="">
+                    <div>
+                        <p id="user-name" class="font-semibold text-lg"></p>
+                        <span id="admin-badge" class="hidden bg-red-500 text-[10px] px-2 py-0.5 rounded-full uppercase font-bold">Admin</span>
+                    </div>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-white transition">Logout</button>
+            </div>
+
+            <div class="text-center py-10">
+                <h2 class="text-4xl font-bold mb-2">พร้อมเริ่มบทเรียนหรือยัง?</h2>
+                <p class="text-slate-400 mb-8">ระบบจะสุ่มคำถาม 15 ข้อจากทั้งหมด 50 ข้อ</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="startCountdown()" class="bg-blue-600 hover:bg-blue-500 px-10 py-4 rounded-2xl font-bold text-xl shadow-xl shadow-blue-900/40 transition-all active:scale-95">
+                        START MISSION
+                    </button>
+                    <button id="admin-panel-btn" onclick="showLeaderboard()" class="hidden bg-slate-700 hover:bg-slate-600 px-6 py-4 rounded-2xl font-bold">
+                        RANKING
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-countdown" class="screen fixed inset-0 z-40 bg-slate-950 items-center justify-center">
+        <h1 id="count-num" class="text-[12rem] font-bold pixel-font glitch">3</h1>
+    </div>
+
+    <div id="screen-game" class="screen min-h-screen flex-col items-center justify-center p-4">
+        <div class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-1 flex flex-col gap-4">
+                <div class="hero-card p-6 rounded-3xl">
+                    <p class="text-slate-400 text-sm uppercase">ข้อที่</p>
+                    <div class="flex items-end gap-2">
+                        <span id="current-idx" class="text-5xl font-bold text-blue-500">1</span>
+                        <span class="text-slate-500 text-2xl mb-1">/ 15</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full mt-4 overflow-hidden">
+                        <div id="pg-bar" class="bg-blue-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+                <div class="hero-card p-6 rounded-3xl bg-blue-600/10 border-blue-500/20">
+                    <p class="text-blue-400 text-sm uppercase">คะแนนปัจจุบัน</p>
+                    <p id="live-score" class="text-4xl font-bold text-white">00</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 hero-card p-8 rounded-3xl relative">
+                <div class="w-full h-64 bg-slate-800 rounded-2xl mb-6 overflow-hidden flex items-center justify-center border border-white/5">
+                    <img id="q-image" class="w-full h-full object-contain" src="" alt="Bone Image">
+                </div>
+                <h3 id="q-text" class="text-2xl font-semibold mb-8 min-h-[3.5rem]">คำถามกำลังโหลด...</h3>
+                
+                <div id="choice-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-result" class="screen min-h-screen flex-col items-center justify-center p-4">
+        <div class="hero-card w-full max-w-md p-10 rounded-[3rem] shadow-2xl text-center border-b-8 border-yellow-500">
+            <h2 class="text-2xl font-bold text-slate-400 uppercase tracking-widest">ยินดีด้วย! จบการทดสอบ</h2>
+            <div class="my-8">
+                <p class="text-sm text-slate-400">คะแนนที่คุณทำได้</p>
+                <div class="text-8xl font-bold text-yellow-500 my-2" id="final-score">0</div>
+                <p class="text-xl">จากทั้งหมด 15 คะแนน</p>
+            </div>
+            <div class="space-y-3">
+                <button onclick="changeScreen('screen-lobby')" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-lg transition">กลับหน้าหลัก</button>
+                <p class="text-slate-500 text-xs mt-4">Data ID: 70d33e5675819074ccc1da8149ad87f4</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CONFIG & DATA ---
+        const CLIENT_ID = "802485672001-7tuhmifm1ph2mb09hle6r6hf0tahu9gv.apps.googleusercontent.com";
+        const DATA_ID = "70d33e5675819074ccc1da8149ad87f4";
+        const ADMIN_EMAIL = "ntun21933@ntun.ac.th";
+
+        // คลังคำถาม 50 ข้อ (สร้างโครงสร้างรอรับภาพ 1.jpg - 50.jpg)
+        const boneData = Array.from({ length: 50 }, (_, i) => ({
+            id: i + 1,
+            image: `${i + 1}.jpg`,
+            question: getBoneQuestion(i + 1), // ฟังก์ชันจำลองคำถาม
+            choices: getBoneChoices(i + 1),
+            answer: 0 // สมมติให้ข้อแรกถูกเสมอใน Mockup (คุณปรับแก้ได้)
+        }));
+
+        // จำลองชื่อคำถาม (คุณสามารถแก้เป็นชื่อจริงได้เลย)
+        function getBoneQuestion(id) {
+            const bones = ["กะโหลกศีรษะ", "กระดูกต้นแขน", "กระดูกซี่โครง", "กระดูกสันหลัง", "กระดูกเชิงกราน", "กระดูกหน้าแข้ง", "กระดูกสะบ้า", "กระดูกไหปลาร้า"];
+            return `จากภาพคือส่วนประกอบของ ${bones[id % bones.length]} ใช่หรือไม่?`;
+        }
+
+        function getBoneChoices(id) {
+            const bones = ["ใช่ ส่วนกะโหลก", "ไม่ใช่ นี่คือส่วนขา", "กระดูกหน้าอก", "กระดูกนิ้วมือ"];
+            return bones.sort(() => Math.random() - 0.5); // สลับตัวเลือก
+        }
+
+        // --- 2. LOGIC VARIABLES ---
+        let currentUser = null;
+        let gameQuestions = [];
+        let currentIdx = 0;
+        let score = 0;
+
+        // --- 3. AUTH SYSTEM ---
+        function handleCredentialResponse(response) {
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            const email = payload.email;
+
+            if (email.endsWith("@ntun.ac.th")) {
+                currentUser = payload;
+                document.getElementById('user-name').innerText = payload.name;
+                document.getElementById('user-img').src = payload.picture;
+                
+                // ตรวจสอบ Admin
+                if (email === ADMIN_EMAIL) {
+                    document.getElementById('admin-badge').classList.remove('hidden');
+                    document.getElementById('admin-panel-btn').classList.remove('hidden');
+                }
+
+                changeScreen('screen-lobby');
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            location.reload();
+        }
+
+        // --- 4. GAME SYSTEM ---
+        function changeScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function startCountdown() {
+            changeScreen('screen-countdown');
+            let count = 3;
+            const el = document.getElementById('count-num');
+            
+            const timer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    el.innerText = count;
+                } else if (count === 0) {
+                    el.innerText = "START!";
+                } else {
+                    clearInterval(timer);
+                    initGame();
+                }
+            }, 1000);
+        }
+
+        function initGame() {
+            // สุ่ม 15 ข้อจาก 50
+            gameQuestions = [...boneData].sort(() => 0.5 - Math.random()).slice(0, 15);
+            currentIdx = 0;
+            score = 0;
+            changeScreen('screen-game');
+            updateUI();
+        }
+
+        function updateUI() {
+            const q = gameQuestions[currentIdx];
+            document.getElementById('current-idx').innerText = currentIdx + 1;
+            document.getElementById('live-score').innerText = score.toString().padStart(2, '0');
+            document.getElementById('pg-bar').style.width = `${((currentIdx) / 15) * 100}%`;
+            document.getElementById('q-text').innerText = q.question;
+            document.getElementById('q-image').src = q.image;
+
+            const grid = document.getElementById('choice-grid');
+            grid.innerHTML = '';
+            
+            q.choices.forEach((choice, i) => {
+                const btn = document.createElement('button');
+                btn.className = "choice-btn p-5 rounded-2xl bg-slate-800 text-left font-medium hover:bg-blue-600";
+                btn.innerText = `${i+1}. ${choice}`;
+                btn.onclick = () => handleAnswer(choice, q.choices[q.answer]);
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selected, correct) {
+            if (selected === correct) score++;
+            
+            if (currentIdx < 14) {
+                currentIdx++;
+                updateUI();
+            } else {
+                finishGame();
+            }
+        }
+
+        function finishGame() {
+            document.getElementById('final-score').innerText = score;
+            changeScreen('screen-result');
+            saveScore(score);
+        }
+
+        // --- 5. DATA STORAGE (Leaderboard) ---
+        function saveScore(s) {
+            console.log(`Saving score ${s} to DataID: ${DATA_ID}`);
+            // ตรงนี้สามารถใส่ Fetch API เพื่อส่งคะแนนไปเก็บใน Database ของคุณได้
+        }
+
+        function showLeaderboard() {
+            alert("ระบบ Ranking กำลังดึงข้อมูลจาก ID: " + DATA_ID);
+        }
+    </script>
+</body>
+</html>
