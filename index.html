@@ -82,7 +82,7 @@
 </head>
 <body>
 
-    <div id="screen-login" class="screen active min-h-screen flex-col items-center justify-center p-4">
+    <div id="screen-login" class="screen min-h-screen flex-col items-center justify-center p-4">
         <div class="glass-card w-full max-w-md p-10 rounded-3xl text-center border-t-4 border-blue-500 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
             <div class="mb-8">
@@ -135,7 +135,7 @@
             <div class="flex justify-between items-center mb-10 pb-6 border-b border-white/10">
                 <div class="flex items-center gap-4">
                     <div class="relative">
-                        <img id="user-img" class="w-14 h-14 rounded-full border-2 border-slate-500 object-cover" src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" alt="Profile">
+                        <img id="user-img" class="w-14 h-14 rounded-full border-2 border-slate-500 object-cover" src="" alt="Profile">
                         <div id="team-indicator" class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#0f172a]"></div>
                     </div>
                     <div>
@@ -153,7 +153,7 @@
                 <h2 class="text-4xl font-extrabold mb-4">พร้อมเริ่มทำภารกิจ?</h2>
                 <div class="inline-flex items-center gap-2 bg-slate-800/50 px-4 py-2 rounded-lg mb-10 border border-slate-700">
                     <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <p class="text-slate-300 text-sm">สุ่มคำถาม 15 ข้อ - จัดอันดับจาก <span class="text-white font-bold">คะแนนสูงสุด</span> และ <span class="text-white font-bold">เวลาเร็วที่สุด</span></p>
+                    <p class="text-slate-300 text-sm">สุ่มคำถาม 20 ข้อ - จัดอันดับจาก <span class="text-white font-bold">คะแนนสูงสุด</span> และ <span class="text-white font-bold">เวลาเร็วที่สุด</span></p>
                 </div>
                 
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
@@ -183,7 +183,7 @@
                     <p class="text-slate-400 text-sm uppercase font-semibold tracking-widest">Question</p>
                     <div class="flex items-baseline gap-2 mt-1">
                         <span id="current-idx" class="text-5xl font-extrabold text-white">1</span>
-                        <span class="text-slate-500 text-xl font-bold">/ 15</span>
+                        <span class="text-slate-500 text-xl font-bold">/ 20</span>
                     </div>
                     <div class="w-full bg-slate-800/80 h-2 rounded-full mt-5 overflow-hidden">
                         <div id="pg-bar" class="bg-gradient-to-r from-blue-400 to-indigo-500 h-full w-0 transition-all duration-500"></div>
@@ -203,13 +203,13 @@
 
             <div class="lg:col-span-3 glass-card p-8 rounded-3xl flex flex-col">
                 <div class="w-full h-64 bg-slate-900/80 rounded-2xl mb-6 overflow-hidden flex items-center justify-center border border-white/5 relative shadow-inner">
-                    <img id="q-image" class="w-full h-full object-contain p-2" src="" alt="Bone Image" onerror="this.src='https://via.placeholder.com/600x300.png?text=Image+Not+Found'">
+                    <img id="q-image" class="w-full h-full object-cover" src="" alt="Bone Image" onerror="this.src='https://placehold.co/600x300/1e293b/3b82f6?text=Anatomy+Image'">
                     <div class="absolute inset-0 bg-blue-500/5 mix-blend-overlay pointer-events-none"></div>
                 </div>
                 <h3 id="q-text" class="text-2xl lg:text-3xl font-semibold mb-8 min-h-[4rem] text-blue-50">คำถามกำลังโหลด...</h3>
                 
                 <div id="choice-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto">
-                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -224,7 +224,7 @@
             <div class="my-10 bg-slate-800/50 rounded-3xl p-8 border border-white/5">
                 <p class="text-sm text-slate-400 uppercase tracking-widest font-semibold">คะแนนที่ได้</p>
                 <div class="text-8xl font-extrabold text-white my-2 drop-shadow-lg" id="final-score">0</div>
-                <p class="text-lg text-slate-400 mb-6">จากทั้งหมด 15 คะแนน</p>
+                <p class="text-lg text-slate-400 mb-6">จากทั้งหมด 20 คะแนน</p>
                 
                 <div class="border-t border-slate-700/50 pt-6 flex justify-between items-center px-4">
                     <span class="text-slate-400 text-sm">เวลาที่ใช้ไป:</span>
@@ -275,7 +275,7 @@
                             </tr>
                         </thead>
                         <tbody id="ranking-tbody" class="divide-y divide-slate-700/50">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -284,22 +284,88 @@
 
     <script>
         const ADMIN_EMAIL = "ntun21933@ntun.ac.th";
-        const DATA_ID = "70d33e5675819074ccc1da8149ad87f4";
+        const SESSION_TIME = 24 * 60 * 60 * 1000; // 24 Hours
 
         // Simulated Database using LocalStorage for real working Ranking!
         const getDB = () => JSON.parse(localStorage.getItem('boneQuizDB')) || { players: [], teamBlueScore: 0, teamRedScore: 0 };
         const saveDB = (db) => localStorage.setItem('boneQuizDB', JSON.stringify(db));
 
-        const boneData = Array.from({ length: 50 }, (_, i) => ({
-            id: i + 1,
-            image: `${i + 1}.jpg`,
-            question: `จากภาพคือส่วนประกอบของกระดูกส่วนใด? (ข้อ ${i + 1})`,
-            choices: ["กะโหลกศีรษะ", "กระดูกซี่โครง", "กระดูกหน้าอก", "กระดูกเชิงกราน"].sort(() => Math.random() - 0.5),
-            answer: 0 
-        }));
+        // ฐานข้อมูลคำถาม 50 ข้อ
+        const allQuestions = [
+            ["กระดูกชิ้นใดที่ยาวที่สุดในร่างกายมนุษย์?", "กระดูกต้นขา (Femur)", "กระดูกหน้าแข้ง (Tibia)", "กระดูกต้นแขน (Humerus)", "กระดูกซี่โครง (Ribs)"],
+            ["กะโหลกศีรษะ (Skull) ทำหน้าที่หลักคืออะไร?", "ปกป้องสมอง", "ผลิตเม็ดเลือดแดง", "ช่วยในการทรงตัว", "ผลิตแคลเซียม"],
+            ["กระดูกซี่โครงของมนุษย์มีทั้งหมดกี่คู่?", "12 คู่", "10 คู่", "14 คู่", "24 คู่"],
+            ["กระดูกสันหลังส่วนคอ (Cervical vertebrae) มีกี่ชิ้น?", "7 ชิ้น", "5 ชิ้น", "12 ชิ้น", "9 ชิ้น"],
+            ["กระดูกสะบ้า (Patella) พบได้ที่ส่วนใดของร่างกาย?", "หัวเข่า", "ข้อศอก", "ข้อมือ", "ข้อเท้า"],
+            ["กระดูกไหปลาร้า มีชื่อภาษาอังกฤษว่าอะไร?", "Clavicle", "Scapula", "Sternum", "Pelvis"],
+            ["ข้อต่อกระดูกแบบใดที่พบได้ที่หัวไหล่และสะโพก?", "Ball and socket joint", "Hinge joint", "Pivot joint", "Gliding joint"],
+            ["เซลล์กระดูกที่ทำหน้าที่สร้างเนื้อกระดูกใหม่เรียกว่าอะไร?", "Osteoblast", "Osteoclast", "Osteocyte", "Chondrocyte"],
+            ["กระดูกหน้าอก (Sternum) มีลักษณะอย่างไร?", "แบนและยาวอยู่กลางหน้าอก", "เป็นท่อยาวกลวง", "เป็นรูปวงแหวน", "เป็นชิ้นเล็กๆ ต่อกัน"],
+            ["กระดูกชิ้นใดที่ไม่ได้อยู่ในกลุ่มกระดูกแกน (Axial skeleton)?", "กระดูกสะบัก (Scapula)", "กระดูกกะโหลกศีรษะ", "กระดูกซี่โครง", "กระดูกสันหลัง"],
+            ["ข้อต่อที่ข้อศอกและหัวเข่า เป็นข้อต่อชนิดใด?", "บานพับ (Hinge)", "ลูกกลมในเบ้า (Ball and socket)", "เดือย (Pivot)", "สไลด์ (Gliding)"],
+            ["ไขกระดูกแดง (Red bone marrow) มีหน้าที่อะไร?", "สร้างเซลล์เม็ดเลือด", "เก็บสะสมไขมัน", "สร้างแคลเซียม", "เชื่อมต่อกล้ามเนื้อ"],
+            ["ไขกระดูกเหลือง (Yellow bone marrow) ส่วนใหญ่ประกอบด้วยอะไร?", "ไขมัน", "เม็ดเลือดแดง", "เส้นประสาท", "แคลเซียม"],
+            ["กระดูกปลายแขนด้านท่อนนอก (ฝั่งนิ้วโป้ง) เรียกว่าอะไร?", "Radius", "Ulna", "Humerus", "Carpal"],
+            ["กระดูกท่อนล่างของขาที่อยู่ด้านหน้าและมีขนาดใหญ่กว่าคือ?", "Tibia (กระดูกหน้าแข้ง)", "Fibula (กระดูกน่อง)", "Femur (กระดูกต้นขา)", "Tarsal (กระดูกข้อเท้า)"],
+            ["กระดูกนิ้วมือ (Phalanges) ใน 1 ข้าง มีทั้งหมดกี่ชิ้น?", "14 ชิ้น", "15 ชิ้น", "12 ชิ้น", "10 ชิ้น"],
+            ["ส่วนใดของกระดูกที่ช่วยลดแรงเสียดทานระหว่างข้อต่อ?", "กระดูกอ่อน (Cartilage)", "เอ็นยึดกระดูก (Ligament)", "เยื่อหุ้มกระดูก (Periosteum)", "น้ำไขข้อ (Synovial fluid)"],
+            ["ข้อใดคือชื่อของกระดูกเชิงกราน?", "Pelvis", "Sacrum", "Coccyx", "Sternum"],
+            ["กระดูกก้นกบ (Coccyx) เกิดจากกระดูกกี่ชิ้นเชื่อมรวมกัน?", "4 ชิ้น", "3 ชิ้น", "5 ชิ้น", "7 ชิ้น"],
+            ["โรคกระดูกพรุน (Osteoporosis) มักเกิดจากการขาดแร่ธาตุใด?", "แคลเซียม", "ธาตุเหล็ก", "ไอโอดีน", "สังกะสี"],
+            ["เยื่อหุ้มกระดูก (Periosteum) มีความสำคัญอย่างไร?", "มีหลอดเลือดและเส้นประสาทมาเลี้ยง", "เป็นที่ผลิตเม็ดเลือดแดง", "เป็นส่วนที่แข็งที่สุดของกระดูก", "ทำหน้าที่รับน้ำหนัก"],
+            ["กระดูกข้อเท้า (Tarsals) ใน 1 ข้างมีจำนวนกี่ชิ้น?", "7 ชิ้น", "8 ชิ้น", "5 ชิ้น", "14 ชิ้น"],
+            ["กระดูกข้อมือ (Carpals) ใน 1 ข้างมีจำนวนกี่ชิ้น?", "8 ชิ้น", "7 ชิ้น", "5 ชิ้น", "14 ชิ้น"],
+            ["กระดูกขากรรไกรล่างมีชื่อเรียกว่าอะไร?", "Mandible", "Maxilla", "Zygomatic", "Nasal"],
+            ["ทารกแรกเกิดมีกระดูกประมาณกี่ชิ้น?", "300 ชิ้น", "206 ชิ้น", "250 ชิ้น", "150 ชิ้น"],
+            ["ผู้ใหญ่ทั่วไปมีกระดูกทั้งหมดกี่ชิ้น?", "206 ชิ้น", "300 ชิ้น", "256 ชิ้น", "196 ชิ้น"],
+            ["กระดูกชิ้นใดที่เล็กที่สุดในร่างกายมนุษย์?", "กระดูกโกลน (Stapes)", "กระดูกทั่ง (Incus)", "กระดูกค้อน (Malleus)", "กระดูกนิ้วก้อย"],
+            ["กระดูกที่หูชั้นกลาง ทำหน้าที่อะไร?", "ขยายความสั่นสะเทือนของเสียง", "รักษาการทรงตัว", "กรองฝุ่นละออง", "รับคลื่นแม่เหล็กไฟฟ้า"],
+            ["เอ็นยึดกระดูกกับกระดูก เรียกว่าอะไร?", "Ligament", "Tendon", "Cartilage", "Muscle"],
+            ["เอ็นยึดกล้ามเนื้อกับกระดูก เรียกว่าอะไร?", "Tendon", "Ligament", "Cartilage", "Joint"],
+            ["ส่วนใดของร่างกายที่ไม่มีกระดูกเลย?", "ลิ้น", "จมูก", "นิ้วก้อย", "หูชั้นนอก"],
+            ["กระดูกซี่โครงคู่ใดที่เรียกว่า 'ซี่โครงลอย' (Floating ribs)?", "คู่ที่ 11 และ 12", "คู่ที่ 1 ถึง 7", "คู่ที่ 8 ถึง 10", "คู่ที่ 1 ถึง 5"],
+            ["วิตามินใดที่ช่วยในการดูดซึมแคลเซียมเข้าสู่กระดูก?", "วิตามิน D", "วิตามิน C", "วิตามิน A", "วิตามิน B12"],
+            ["โครงกระดูกรยางค์ (Appendicular skeleton) ประกอบด้วยกระดูกกี่ชิ้น?", "126 ชิ้น", "80 ชิ้น", "206 ชิ้น", "150 ชิ้น"],
+            ["ฮอร์โมนใดที่ช่วยดึงแคลเซียมจากกระดูกเข้าสู่กระแสเลือดเมื่อระดับแคลเซียมต่ำ?", "Parathyroid hormone", "Calcitonin", "Insulin", "Thyroxine"],
+            ["กระดูกสะบัก (Scapula) อยู่บริเวณใดของร่างกาย?", "แผ่นหลังด้านบน", "หน้าอก", "บั้นเอว", "ฐานลำคอ"],
+            ["ข้อต่อที่คอ ซึ่งทำให้เราหันซ้ายขวาได้ เป็นข้อต่อชนิดใด?", "Pivot joint", "Hinge joint", "Saddle joint", "Gliding joint"],
+            ["ความผิดปกติที่กระดูกสันหลังโค้งงอไปด้านข้าง เรียกว่าอะไร?", "Scoliosis (กระดูกสันหลังคด)", "Kyphosis (หลังค่อม)", "Lordosis (หลังแอ่น)", "Osteoarthritis (ข้อเสื่อม)"],
+            ["เซลล์กระดูกที่ทำหน้าที่สลายเนื้อกระดูกที่เสื่อมสภาพคือ?", "Osteoclast", "Osteoblast", "Osteocyte", "Stem cell"],
+            ["เนื้อกระดูกส่วนที่แข็งและทึบ เรียกว่าอะไร?", "Compact bone", "Spongy bone", "Bone marrow", "Cartilage"],
+            ["เนื้อกระดูกส่วนที่มีลักษณะเป็นรูพรุนคล้ายฟองน้ำ เรียกว่าอะไร?", "Spongy bone", "Compact bone", "Periosteum", "Marrow cavity"],
+            ["กระดูกขากรรไกรบนมีชื่อเรียกว่าอะไร?", "Maxilla", "Mandible", "Frontal", "Parietal"],
+            ["ข้อต่อที่ฐานของนิ้วหัวแม่มือ เป็นข้อต่อชนิดใด?", "Saddle joint", "Hinge joint", "Pivot joint", "Ball and socket"],
+            ["แร่ธาตุใดที่เป็นส่วนประกอบหลักของกระดูกร่วมกับแคลเซียม?", "ฟอสฟอรัส", "โซเดียม", "โพแทสเซียม", "แมกนีเซียม"],
+            ["รอยต่อระหว่างกระดูกกะโหลกศีรษะ (Suture) เป็นข้อต่อประเภทใด?", "ข้อต่อที่เคลื่อนไหวไม่ได้ (Immovable)", "ข้อต่อที่เคลื่อนไหวได้เล็กน้อย", "ข้อต่อบานพับ", "ข้อต่ออิสระ"],
+            ["กระดูกสันหลังส่วนอก (Thoracic vertebrae) มีกี่ชิ้น?", "12 ชิ้น", "7 ชิ้น", "5 ชิ้น", "10 ชิ้น"],
+            ["การสร้างกระดูกในทารกในครรภ์ ส่วนใหญ่เริ่มจากการสร้างเนื้อเยื่อชนิดใดก่อน?", "กระดูกอ่อน (Cartilage)", "พังผืด (Fascia)", "กล้ามเนื้อ (Muscle)", "เซลล์ประสาท (Nerve)"],
+            ["หมอนรองกระดูกสันหลัง (Intervertebral disc) ทำหน้าที่อะไร?", "รับแรงกระแทกและยืดหยุ่น", "ผลิตน้ำไขข้อ", "สร้างเม็ดเลือด", "เชื่อมต่อประสาท"],
+            ["กระดูกในร่างกายทำหน้าที่เป็นแหล่งสำรองของสิ่งใด?", "แร่ธาตุ (เช่น แคลเซียม)", "คาร์โบไฮเดรต", "วิตามินซี", "โปรตีน"],
+            ["อวัยวะใดที่ถูกปกป้องโดยกระดูกซี่โครงเป็นหลัก?", "หัวใจและปอด", "ตับและไต", "กระเพาะอาหารและลำไส้", "สมองและไขสันหลัง"]
+        ];
+
+        // สร้าง Object จากฐานข้อมูล 50 ข้อ
+        const boneData = allQuestions.map((q, i) => {
+            return {
+                id: i + 1,
+                // ใส่รูป placeholder จำลองที่มีชื่อกระดูก/หัวข้อคำถามประกอบ 
+                image: `https://placehold.co/600x300/1e293b/60a5fa?text=Anatomy+Question+${i+1}`,
+                question: q[0],
+                // นำตัวเลือกมาสลับตำแหน่ง
+                choices: [q[1], q[2], q[3], q[4]].sort(() => Math.random() - 0.5),
+                // หาว่าคำตอบที่ถูกต้อง (q[1]) ไปอยู่ตำแหน่งไหนหลังจากสลับ
+                answer: null,
+                correctText: q[1]
+            };
+        });
+        
+        // กำหนด index คำตอบที่ถูกต้องหลังจากสลับ choices
+        boneData.forEach(item => {
+            item.answer = item.choices.indexOf(item.correctText);
+        });
 
         let userProfile = { name: "", email: "", picture: "" };
-        let playerTeam = null; // 'blue' or 'red'
+        let playerTeam = null; 
         
         // Game State
         let gameQuestions = [];
@@ -314,6 +380,46 @@
             const target = document.getElementById(id);
             if (target) target.classList.add('active');
         };
+
+        // --- ระบบจำการล็อกอิน 24 ชั่วโมง ---
+        window.onload = function() {
+            const sessionStr = localStorage.getItem('boneSession');
+            if (sessionStr) {
+                const session = JSON.parse(sessionStr);
+                // ตรวจสอบว่าหมดเวลา 24 ชม. หรือยัง
+                if (session.expiry > Date.now()) {
+                    userProfile = session.profile;
+                    playerTeam = session.team;
+                    
+                    document.getElementById('user-name').innerText = userProfile.name;
+                    document.getElementById('user-img').src = userProfile.picture;
+                    
+                    if (userProfile.email === ADMIN_EMAIL) {
+                        document.getElementById('admin-badge').classList.remove('hidden');
+                        document.getElementById('admin-panel-btn').classList.remove('hidden');
+                    }
+                    
+                    if (playerTeam) {
+                        updateTeamUI(playerTeam);
+                        window.changeScreen('screen-lobby');
+                    } else {
+                        window.changeScreen('screen-team');
+                    }
+                    return; // ไม่ต้องล็อกอินใหม่
+                } else {
+                    localStorage.removeItem('boneSession'); // หมดอายุ ล้างข้อมูล
+                }
+            }
+            window.changeScreen('screen-login');
+        };
+
+        function saveSession() {
+            localStorage.setItem('boneSession', JSON.stringify({
+                profile: userProfile,
+                team: playerTeam,
+                expiry: Date.now() + SESSION_TIME
+            }));
+        }
 
         window.decodeJwt = function(token) {
             try {
@@ -359,14 +465,18 @@
                 document.getElementById('admin-panel-btn').classList.remove('hidden');
             }
             
-            // Go to Team Selection first
+            saveSession(); // เซฟเซสชันเมื่อล็อกอินผ่าน
             window.changeScreen('screen-team');
         }
 
         window.selectTeam = function(team) {
             playerTeam = team;
-            
-            // Update Lobby UI based on Team
+            saveSession(); // อัปเดตเซสชันเมื่อเลือกทีม
+            updateTeamUI(team);
+            window.changeScreen('screen-lobby');
+        }
+        
+        function updateTeamUI(team) {
             const teamBadge = document.getElementById('team-badge');
             const teamIndicator = document.getElementById('team-indicator');
             
@@ -381,11 +491,12 @@
                 teamIndicator.className = "absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#0f172a] bg-red-500";
                 document.getElementById('user-img').style.borderColor = "#f43f5e";
             }
-
-            window.changeScreen('screen-lobby');
         }
 
-        window.logout = function() { location.reload(); };
+        window.logout = function() { 
+            localStorage.removeItem('boneSession');
+            location.reload(); 
+        };
 
         window.startCountdown = function() {
             window.changeScreen('screen-countdown');
@@ -407,7 +518,15 @@
         };
 
         window.initGame = function() {
-            gameQuestions = [...boneData].sort(() => 0.5 - Math.random()).slice(0, 15);
+            // สุ่มเลือก 20 คำถามจาก 50 คำถาม
+            gameQuestions = [...boneData].sort(() => 0.5 - Math.random()).slice(0, 20);
+            
+            // สุ่มลำดับตัวเลือกใหม่ทุกครั้งก่อนเล่น (เพื่อไม่ให้จำตำแหน่งได้)
+            gameQuestions.forEach(q => {
+                q.choices.sort(() => 0.5 - Math.random());
+                q.answer = q.choices.indexOf(q.correctText);
+            });
+
             currentIdx = 0;
             score = 0;
             gameStartTime = Date.now();
@@ -415,7 +534,6 @@
             window.changeScreen('screen-game');
             window.updateUI();
 
-            // Start live timer
             clearInterval(timeInterval);
             timeInterval = setInterval(() => {
                 const elapsed = (Date.now() - gameStartTime) / 1000;
@@ -427,7 +545,8 @@
             const q = gameQuestions[currentIdx];
             document.getElementById('current-idx').innerText = currentIdx + 1;
             document.getElementById('live-score').innerText = score;
-            document.getElementById('pg-bar').style.width = `${((currentIdx) / 15) * 100}%`;
+            // คำนวณหลอดพลังจาก 20 ข้อ
+            document.getElementById('pg-bar').style.width = `${((currentIdx) / 20) * 100}%`;
             document.getElementById('q-text').innerText = q.question;
             document.getElementById('q-image').src = q.image;
 
@@ -447,7 +566,7 @@
         window.handleAnswer = function(selected, correct) {
             if (selected === correct) score++;
             
-            if (currentIdx < 14) {
+            if (currentIdx < 19) { // เปลี่ยนจาก 14 เป็น 19 (รวมเป็น 20 ข้อ)
                 currentIdx++;
                 window.updateUI();
             } else {
@@ -462,7 +581,6 @@
             document.getElementById('final-score').innerText = score;
             document.getElementById('final-time').innerText = totalTimeTaken.toFixed(2) + "s";
             
-            // Background effect based on team
             const bgGlow = document.getElementById('result-team-glow');
             bgGlow.className = `absolute -top-32 -left-32 w-64 h-64 rounded-full blur-[100px] ${playerTeam === 'blue' ? 'bg-blue-500/30' : 'bg-red-500/30'}`;
 
@@ -472,7 +590,6 @@
 
         function saveDataToDB() {
             const db = getDB();
-            // Record player logic: sort mainly by score (desc), then time (asc)
             db.players.push({
                 name: userProfile.name,
                 team: playerTeam,
@@ -481,7 +598,6 @@
                 timestamp: Date.now()
             });
             
-            // Add to team total score
             if(playerTeam === 'blue') db.teamBlueScore += score;
             if(playerTeam === 'red') db.teamRedScore += score;
             
@@ -492,7 +608,6 @@
             window.changeScreen('screen-lobby');
         };
 
-        // --- Admin Dashboard Logic ---
         window.showLeaderboard = function() {
             renderLeaderboard();
             window.changeScreen('screen-ranking');
@@ -501,11 +616,9 @@
         function renderLeaderboard() {
             const db = getDB();
             
-            // Update Team Score
             document.getElementById('rank-team-blue').innerText = db.teamBlueScore;
             document.getElementById('rank-team-red').innerText = db.teamRedScore;
 
-            // Sort Players (Score DESC, Time ASC)
             const sortedPlayers = db.players.sort((a, b) => {
                 if (b.score !== a.score) return b.score - a.score;
                 return a.time - b.time;
