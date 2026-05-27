@@ -8,15 +8,56 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Kanit', sans-serif; background-color: #0f172a; color: white; overflow-x: hidden; }
+        body { 
+            font-family: 'Kanit', sans-serif; 
+            background-color: #0f172a; 
+            color: white; 
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(244, 63, 94, 0.15), transparent 25%);
+            background-attachment: fixed;
+        }
         .pixel-font { font-family: 'Press Start 2P', cursive; }
-        .hero-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .choice-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
-        .choice-btn:hover { transform: translateY(-2px); background: #3b82f6; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5); }
         
+        /* Glassmorphism & Cards */
+        .glass-card { 
+            background: rgba(30, 41, 59, 0.6); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Choice Buttons */
+        .choice-btn { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid rgba(255,255,255,0.05); 
+            cursor: pointer; 
+            position: relative;
+            overflow: hidden;
+        }
+        .choice-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: all 0.5s;
+        }
+        .choice-btn:hover::before { left: 100%; }
+        .choice-btn:hover { 
+            transform: translateY(-3px) scale(1.02); 
+            background: #3b82f6; 
+            border-color: #60a5fa;
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5); 
+        }
+
+        /* Team Selection Buttons */
+        .team-btn-blue:hover { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); border-color: #3b82f6; }
+        .team-btn-red:hover { box-shadow: 0 0 30px rgba(244, 63, 94, 0.6); border-color: #f43f5e; }
+
+        /* Glitch Effect */
         .glitch { position: relative; animation: glitch 1s linear infinite; }
         @keyframes glitch {
             2%, 64% { transform: translate(2px, 0) skew(0deg); }
@@ -24,22 +65,33 @@
             62% { transform: translate(0, 0) skew(5deg); }
         }
         
-        /* แก้ไขระบบซ่อน/แสดงหน้าจอให้ชัวร์ขึ้น */
-        .screen { display: none !important; opacity: 0; transition: opacity 0.3s ease; }
-        .screen.active { display: flex !important; opacity: 1; animation: fadeIn 0.5s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Screen Transitions */
+        .screen { display: none !important; opacity: 0; transition: opacity 0.4s ease; }
+        .screen.active { display: flex !important; opacity: 1; animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeInUp { 
+            from { opacity: 0; transform: translateY(20px) scale(0.98); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
 <body>
 
     <div id="screen-login" class="screen active min-h-screen flex-col items-center justify-center p-4">
-        <div class="hero-card w-full max-w-md p-8 rounded-3xl shadow-2xl text-center border-t-4 border-blue-500">
+        <div class="glass-card w-full max-w-md p-10 rounded-3xl text-center border-t-4 border-blue-500 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
             <div class="mb-8">
-                <div class="w-20 h-20 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-900/50">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                <div class="w-24 h-24 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl mx-auto flex items-center justify-center mb-6 shadow-2xl shadow-blue-900/50 transform rotate-3 hover:rotate-0 transition-all duration-300">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
                 </div>
-                <h1 class="text-3xl font-bold mb-2">Bone Quiz Online</h1>
-                <p class="text-slate-400">เข้าใช้งานด้วยอีเมลของโรงเรียนเท่านั้น</p>
+                <h1 class="text-4xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300">Bone Quiz</h1>
+                <p class="text-slate-400 text-sm">ระบบแข่งขันตอบคำถามกายวิภาคศาสตร์</p>
+                <p class="text-slate-500 text-xs mt-1">(เข้าใช้งานด้วยอีเมลโรงเรียนเท่านั้น)</p>
             </div>
             
             <div id="g_id_onload"
@@ -47,91 +99,185 @@
                  data-callback="handleCredentialResponse"
                  data-auto_prompt="false">
             </div>
-            <div class="g_id_signin flex justify-center mb-4" data-type="standard" data-shape="pill" data-theme="filled_blue" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+            <div class="g_id_signin flex justify-center mb-4" data-type="standard" data-shape="pill" data-theme="filled_black" data-text="signin_with" data-size="large"></div>
             
-            <p id="login-error" class="text-red-400 mt-4 text-sm hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20"></p>
+            <p id="login-error" class="text-red-400 mt-4 text-sm hidden bg-red-500/10 p-3 rounded-xl border border-red-500/20"></p>
 
-            <button type="button" onclick="devLoginBypass()" class="mt-8 text-xs text-slate-500 underline hover:text-slate-300">
+            <button type="button" onclick="devLoginBypass()" class="mt-8 text-xs text-slate-500 underline hover:text-white transition-colors">
                 [โหมดนักพัฒนา] ข้ามการล็อกอิน
             </button>
         </div>
     </div>
 
+    <div id="screen-team" class="screen min-h-screen flex-col items-center justify-center p-4">
+        <h2 class="text-3xl font-bold mb-8 text-center animate__animated animate__fadeInDown">เลือกสังกัดทีมของคุณ</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+            <button onclick="selectTeam('blue')" class="team-btn-blue glass-card p-10 rounded-3xl flex flex-col items-center justify-center border-2 border-transparent transition-all group">
+                <div class="w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-blue-400 tracking-wider">TEAM BLUE</h3>
+                <p class="text-slate-400 mt-2 text-sm">หน่วยความเร็วและแม่นยำ</p>
+            </button>
+            
+            <button onclick="selectTeam('red')" class="team-btn-red glass-card p-10 rounded-3xl flex flex-col items-center justify-center border-2 border-transparent transition-all group">
+                <div class="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-red-400 tracking-wider">TEAM RED</h3>
+                <p class="text-slate-400 mt-2 text-sm">หน่วยทะลวงและวิเคราะห์</p>
+            </button>
+        </div>
+    </div>
+
     <div id="screen-lobby" class="screen min-h-screen flex-col items-center justify-center p-4">
-        <div class="hero-card w-full max-w-2xl p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-            <div class="flex justify-between items-center mb-8">
-                <div class="flex items-center gap-3">
-                    <img id="user-img" class="w-12 h-12 rounded-full border-2 border-blue-500 bg-slate-700 object-cover" src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" alt="">
+        <div class="glass-card w-full max-w-2xl p-10 rounded-[2.5rem] relative overflow-hidden">
+            <div class="flex justify-between items-center mb-10 pb-6 border-b border-white/10">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <img id="user-img" class="w-14 h-14 rounded-full border-2 border-slate-500 object-cover" src="https://api.dicebear.com/7.x/avataaars/svg?seed=student" alt="Profile">
+                        <div id="team-indicator" class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#0f172a]"></div>
+                    </div>
                     <div>
-                        <p id="user-name" class="font-semibold text-lg text-left">Student</p>
-                        <span id="admin-badge" class="hidden bg-red-500 text-[10px] px-2 py-0.5 rounded-full uppercase font-bold">Admin</span>
+                        <p id="user-name" class="font-bold text-xl text-white">Student</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span id="team-badge" class="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wider"></span>
+                            <span id="admin-badge" class="hidden bg-purple-500/20 text-purple-400 border border-purple-500/50 text-[10px] px-2 py-0.5 rounded-full uppercase font-bold">Admin</span>
+                        </div>
                     </div>
                 </div>
-                <button type="button" onclick="logout()" class="text-slate-400 hover:text-white transition bg-slate-800 px-4 py-2 rounded-lg">Logout</button>
+                <button type="button" onclick="logout()" class="text-slate-400 hover:text-white hover:bg-slate-800 transition px-4 py-2 rounded-xl text-sm font-medium">Logout</button>
             </div>
 
-            <div class="text-center py-10">
-                <h2 class="text-4xl font-bold mb-2">พร้อมเริ่มบทเรียนหรือยัง?</h2>
-                <p class="text-slate-400 mb-8">ระบบจะสุ่มคำถาม 15 ข้อจากทั้งหมด 50 ข้อ</p>
-                <div class="flex justify-center gap-4">
-                    <button type="button" onclick="startCountdown()" class="bg-blue-600 hover:bg-blue-500 px-10 py-4 rounded-2xl font-bold text-xl shadow-xl shadow-blue-900/40 transition-all active:scale-95">
+            <div class="text-center py-6">
+                <h2 class="text-4xl font-extrabold mb-4">พร้อมเริ่มทำภารกิจ?</h2>
+                <div class="inline-flex items-center gap-2 bg-slate-800/50 px-4 py-2 rounded-lg mb-10 border border-slate-700">
+                    <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <p class="text-slate-300 text-sm">สุ่มคำถาม 15 ข้อ - จัดอันดับจาก <span class="text-white font-bold">คะแนนสูงสุด</span> และ <span class="text-white font-bold">เวลาเร็วที่สุด</span></p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button type="button" onclick="startCountdown()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 px-10 py-4 rounded-2xl font-bold text-xl shadow-xl shadow-blue-900/40 transition-all active:scale-95 text-white">
                         START MISSION
                     </button>
-                    <button type="button" id="admin-panel-btn" onclick="showLeaderboard()" class="hidden bg-slate-700 hover:bg-slate-600 px-6 py-4 rounded-2xl font-bold">
-                        RANKING
+                    <button type="button" id="admin-panel-btn" onclick="showLeaderboard()" class="hidden bg-slate-800 hover:bg-slate-700 border border-slate-600 px-8 py-4 rounded-2xl font-bold transition-all text-white">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            RANKING
+                        </div>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="screen-countdown" class="screen fixed inset-0 z-40 bg-slate-950 flex-col items-center justify-center">
-        <h1 id="count-num" class="text-[12rem] font-bold pixel-font glitch text-white">3</h1>
+    <div id="screen-countdown" class="screen fixed inset-0 z-50 bg-[#0f172a] flex-col items-center justify-center">
+        <h1 id="count-num" class="text-[15rem] font-bold pixel-font glitch text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-500 drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">3</h1>
     </div>
 
     <div id="screen-game" class="screen min-h-screen flex-col items-center justify-center p-4">
-        <div class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-4 gap-6">
             
             <div class="lg:col-span-1 flex flex-col gap-4">
-                <div class="hero-card p-6 rounded-3xl">
-                    <p class="text-slate-400 text-sm uppercase">ข้อที่</p>
-                    <div class="flex items-end gap-2">
-                        <span id="current-idx" class="text-5xl font-bold text-blue-500">1</span>
-                        <span class="text-slate-500 text-2xl mb-1">/ 15</span>
+                <div class="glass-card p-6 rounded-3xl">
+                    <p class="text-slate-400 text-sm uppercase font-semibold tracking-widest">Question</p>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <span id="current-idx" class="text-5xl font-extrabold text-white">1</span>
+                        <span class="text-slate-500 text-xl font-bold">/ 15</span>
                     </div>
-                    <div class="w-full bg-slate-800 h-2 rounded-full mt-4 overflow-hidden">
-                        <div id="pg-bar" class="bg-blue-500 h-full w-0 transition-all duration-500"></div>
+                    <div class="w-full bg-slate-800/80 h-2 rounded-full mt-5 overflow-hidden">
+                        <div id="pg-bar" class="bg-gradient-to-r from-blue-400 to-indigo-500 h-full w-0 transition-all duration-500"></div>
                     </div>
                 </div>
-                <div class="hero-card p-6 rounded-3xl bg-blue-600/10 border-blue-500/20">
-                    <p class="text-blue-400 text-sm uppercase">คะแนนปัจจุบัน</p>
-                    <p id="live-score" class="text-4xl font-bold text-white">00</p>
+                
+                <div class="glass-card p-6 rounded-3xl border-l-4 border-l-green-500">
+                    <p class="text-slate-400 text-sm uppercase font-semibold">Score</p>
+                    <p id="live-score" class="text-4xl font-bold text-green-400 mt-1">0</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl border-l-4 border-l-yellow-500">
+                    <p class="text-slate-400 text-sm uppercase font-semibold">Time</p>
+                    <p id="live-time" class="text-3xl font-mono text-yellow-400 mt-1">0.0s</p>
                 </div>
             </div>
 
-            <div class="lg:col-span-2 hero-card p-8 rounded-3xl relative">
-                <div class="w-full h-64 bg-slate-800 rounded-2xl mb-6 overflow-hidden flex items-center justify-center border border-white/5">
-                    <img id="q-image" class="w-full h-full object-contain" src="" alt="Bone Image" onerror="this.src='https://via.placeholder.com/400x200.png?text=Image+Not+Found'">
+            <div class="lg:col-span-3 glass-card p-8 rounded-3xl flex flex-col">
+                <div class="w-full h-64 bg-slate-900/80 rounded-2xl mb-6 overflow-hidden flex items-center justify-center border border-white/5 relative shadow-inner">
+                    <img id="q-image" class="w-full h-full object-contain p-2" src="" alt="Bone Image" onerror="this.src='https://via.placeholder.com/600x300.png?text=Image+Not+Found'">
+                    <div class="absolute inset-0 bg-blue-500/5 mix-blend-overlay pointer-events-none"></div>
                 </div>
-                <h3 id="q-text" class="text-2xl font-semibold mb-8 min-h-[3.5rem]">คำถามกำลังโหลด...</h3>
+                <h3 id="q-text" class="text-2xl lg:text-3xl font-semibold mb-8 min-h-[4rem] text-blue-50">คำถามกำลังโหลด...</h3>
                 
-                <div id="choice-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div id="choice-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto">
                     </div>
             </div>
         </div>
     </div>
 
     <div id="screen-result" class="screen min-h-screen flex-col items-center justify-center p-4">
-        <div class="hero-card w-full max-w-md p-10 rounded-[3rem] shadow-2xl text-center border-b-8 border-yellow-500">
-            <h2 class="text-2xl font-bold text-slate-400 uppercase tracking-widest">ยินดีด้วย! จบการทดสอบ</h2>
-            <div class="my-8">
-                <p class="text-sm text-slate-400">คะแนนที่คุณทำได้</p>
-                <div class="text-8xl font-bold text-yellow-500 my-2" id="final-score">0</div>
-                <p class="text-xl">จากทั้งหมด 15 คะแนน</p>
+        <div class="glass-card w-full max-w-lg p-10 rounded-[3rem] text-center relative overflow-hidden">
+            <div id="result-team-glow" class="absolute -top-32 -left-32 w-64 h-64 bg-blue-500/20 rounded-full blur-[100px]"></div>
+            
+            <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 uppercase tracking-widest mb-2">MISSION ACCOMPLISHED</h2>
+            <p class="text-slate-400">ข้อมูลของคุณถูกส่งเข้าระบบส่วนกลางแล้ว</p>
+            
+            <div class="my-10 bg-slate-800/50 rounded-3xl p-8 border border-white/5">
+                <p class="text-sm text-slate-400 uppercase tracking-widest font-semibold">คะแนนที่ได้</p>
+                <div class="text-8xl font-extrabold text-white my-2 drop-shadow-lg" id="final-score">0</div>
+                <p class="text-lg text-slate-400 mb-6">จากทั้งหมด 15 คะแนน</p>
+                
+                <div class="border-t border-slate-700/50 pt-6 flex justify-between items-center px-4">
+                    <span class="text-slate-400 text-sm">เวลาที่ใช้ไป:</span>
+                    <span class="text-2xl font-mono font-bold text-yellow-400" id="final-time">0.0s</span>
+                </div>
             </div>
-            <div class="space-y-3">
-                <button type="button" onclick="resetToLobby()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-lg transition">กลับหน้าหลัก</button>
-                <p class="text-slate-500 text-xs mt-4">Data ID: 70d33e5675819074ccc1da8149ad87f4</p>
+            
+            <div class="space-y-4 relative z-10">
+                <button type="button" onclick="resetToLobby()" class="w-full bg-slate-700 hover:bg-slate-600 border border-slate-500 py-4 rounded-2xl font-bold text-lg transition text-white shadow-lg">กลับหน้าหลัก</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-ranking" class="screen min-h-screen flex-col items-center p-4 py-10">
+        <div class="w-full max-w-5xl">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">LIVE RANKING</h1>
+                <button onclick="changeScreen('screen-lobby')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-sm border border-slate-600">กลับล็อบบี้</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-10">
+                <div class="glass-card p-6 rounded-3xl border-b-4 border-blue-500 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-blue-400 font-bold text-xl">TEAM BLUE</h3>
+                        <p class="text-slate-400 text-sm">คะแนนรวม</p>
+                    </div>
+                    <div class="text-4xl font-extrabold text-white" id="rank-team-blue">0</div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl border-b-4 border-red-500 flex justify-between items-center">
+                    <div class="text-4xl font-extrabold text-white" id="rank-team-red">0</div>
+                    <div class="text-right">
+                        <h3 class="text-red-400 font-bold text-xl">TEAM RED</h3>
+                        <p class="text-slate-400 text-sm">คะแนนรวม</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl overflow-hidden border border-white/10">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-800/80 text-slate-300 text-sm uppercase tracking-wider">
+                                <th class="p-4 pl-6 font-semibold rounded-tl-3xl">Rank</th>
+                                <th class="p-4 font-semibold">Player</th>
+                                <th class="p-4 font-semibold text-center">Team</th>
+                                <th class="p-4 font-semibold text-center">Score</th>
+                                <th class="p-4 pr-6 font-semibold text-right rounded-tr-3xl">Time (s)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ranking-tbody" class="divide-y divide-slate-700/50">
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -139,6 +285,10 @@
     <script>
         const ADMIN_EMAIL = "ntun21933@ntun.ac.th";
         const DATA_ID = "70d33e5675819074ccc1da8149ad87f4";
+
+        // Simulated Database using LocalStorage for real working Ranking!
+        const getDB = () => JSON.parse(localStorage.getItem('boneQuizDB')) || { players: [], teamBlueScore: 0, teamRedScore: 0 };
+        const saveDB = (db) => localStorage.setItem('boneQuizDB', JSON.stringify(db));
 
         const boneData = Array.from({ length: 50 }, (_, i) => ({
             id: i + 1,
@@ -148,34 +298,30 @@
             answer: 0 
         }));
 
+        let userProfile = { name: "", email: "", picture: "" };
+        let playerTeam = null; // 'blue' or 'red'
+        
+        // Game State
         let gameQuestions = [];
         let currentIdx = 0;
         let score = 0;
+        let gameStartTime = 0;
+        let timeInterval = null;
+        let totalTimeTaken = 0;
 
-        // บังคับให้ฟังก์ชันผูกกับ window ป้องกันบั๊กหาตัวแปรไม่เจอ
         window.changeScreen = function(id) {
-            document.querySelectorAll('.screen').forEach(s => {
-                s.classList.remove('active');
-            });
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(id);
-            if (target) {
-                target.classList.add('active');
-            } else {
-                console.error("ไม่พบหน้าจอ:", id);
-            }
+            if (target) target.classList.add('active');
         };
 
         window.decodeJwt = function(token) {
             try {
                 const base64Url = token.split('.')[1];
                 const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
                 return JSON.parse(jsonPayload);
-            } catch (e) {
-                return null;
-            }
+            } catch (e) { return null; }
         };
 
         window.handleCredentialResponse = function(response) {
@@ -184,21 +330,15 @@
             
             const payload = window.decodeJwt(response.credential);
             if (!payload) {
-                errorEl.innerText = "เกิดข้อผิดพลาดในการตรวจสอบบัญชี กรุณาลองใหม่";
+                errorEl.innerText = "เกิดข้อผิดพลาดในการตรวจสอบบัญชี";
                 errorEl.classList.remove('hidden');
                 return;
             }
 
             const email = payload.email;
             if (email.endsWith("@ntun.ac.th")) {
-                document.getElementById('user-name').innerText = payload.name;
-                document.getElementById('user-img').src = payload.picture;
-                
-                if (email === ADMIN_EMAIL) {
-                    document.getElementById('admin-badge').classList.remove('hidden');
-                    document.getElementById('admin-panel-btn').classList.remove('hidden');
-                }
-                window.changeScreen('screen-lobby');
+                userProfile = { name: payload.name, email: email, picture: payload.picture };
+                setupUserLogin();
             } else {
                 errorEl.innerText = `ปฏิเสธการเข้าถึง: กรุณาใช้อีเมล @ntun.ac.th`;
                 errorEl.classList.remove('hidden');
@@ -206,15 +346,46 @@
         };
 
         window.devLoginBypass = function() {
-            document.getElementById('user-name').innerText = "ผู้ใช้ทดสอบ";
-            document.getElementById('admin-badge').classList.remove('hidden');
-            document.getElementById('admin-panel-btn').classList.remove('hidden');
-            window.changeScreen('screen-lobby');
+            userProfile = { name: "ผู้ใช้ทดสอบ (Dev)", email: ADMIN_EMAIL, picture: "https://api.dicebear.com/7.x/avataaars/svg?seed=dev" };
+            setupUserLogin();
         };
 
-        window.logout = function() {
-            location.reload();
-        };
+        function setupUserLogin() {
+            document.getElementById('user-name').innerText = userProfile.name;
+            document.getElementById('user-img').src = userProfile.picture;
+            
+            if (userProfile.email === ADMIN_EMAIL) {
+                document.getElementById('admin-badge').classList.remove('hidden');
+                document.getElementById('admin-panel-btn').classList.remove('hidden');
+            }
+            
+            // Go to Team Selection first
+            window.changeScreen('screen-team');
+        }
+
+        window.selectTeam = function(team) {
+            playerTeam = team;
+            
+            // Update Lobby UI based on Team
+            const teamBadge = document.getElementById('team-badge');
+            const teamIndicator = document.getElementById('team-indicator');
+            
+            if (team === 'blue') {
+                teamBadge.innerText = "Team Blue";
+                teamBadge.className = "text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wider bg-blue-500/20 text-blue-400 border border-blue-500/50";
+                teamIndicator.className = "absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#0f172a] bg-blue-500";
+                document.getElementById('user-img').style.borderColor = "#3b82f6";
+            } else {
+                teamBadge.innerText = "Team Red";
+                teamBadge.className = "text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wider bg-red-500/20 text-red-400 border border-red-500/50";
+                teamIndicator.className = "absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#0f172a] bg-red-500";
+                document.getElementById('user-img').style.borderColor = "#f43f5e";
+            }
+
+            window.changeScreen('screen-lobby');
+        }
+
+        window.logout = function() { location.reload(); };
 
         window.startCountdown = function() {
             window.changeScreen('screen-countdown');
@@ -227,7 +398,7 @@
                 if (count > 0) {
                     el.innerText = count;
                 } else if (count === 0) {
-                    el.innerText = "START!";
+                    el.innerText = "GO!";
                 } else {
                     clearInterval(timer);
                     window.initGame();
@@ -236,18 +407,26 @@
         };
 
         window.initGame = function() {
-            // สุ่ม 15 ข้อ
             gameQuestions = [...boneData].sort(() => 0.5 - Math.random()).slice(0, 15);
             currentIdx = 0;
             score = 0;
+            gameStartTime = Date.now();
+            
             window.changeScreen('screen-game');
             window.updateUI();
+
+            // Start live timer
+            clearInterval(timeInterval);
+            timeInterval = setInterval(() => {
+                const elapsed = (Date.now() - gameStartTime) / 1000;
+                document.getElementById('live-time').innerText = elapsed.toFixed(1) + "s";
+            }, 100);
         };
 
         window.updateUI = function() {
             const q = gameQuestions[currentIdx];
             document.getElementById('current-idx').innerText = currentIdx + 1;
-            document.getElementById('live-score').innerText = score.toString().padStart(2, '0');
+            document.getElementById('live-score').innerText = score;
             document.getElementById('pg-bar').style.width = `${((currentIdx) / 15) * 100}%`;
             document.getElementById('q-text').innerText = q.question;
             document.getElementById('q-image').src = q.image;
@@ -258,8 +437,8 @@
             q.choices.forEach((choice, i) => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = "choice-btn p-5 rounded-2xl bg-slate-800 text-left font-medium text-[16px] text-white";
-                btn.innerText = `${i+1}. ${choice}`;
+                btn.className = "choice-btn p-5 rounded-2xl bg-slate-800/80 text-left font-medium text-[16px] text-white flex items-center gap-4";
+                btn.innerHTML = `<span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 font-bold text-sm">${i+1}</span> <span>${choice}</span>`;
                 btn.onclick = () => window.handleAnswer(choice, q.choices[q.answer]);
                 grid.appendChild(btn);
             });
@@ -277,17 +456,91 @@
         };
 
         window.finishGame = function() {
+            clearInterval(timeInterval);
+            totalTimeTaken = (Date.now() - gameStartTime) / 1000;
+            
             document.getElementById('final-score').innerText = score;
+            document.getElementById('final-time').innerText = totalTimeTaken.toFixed(2) + "s";
+            
+            // Background effect based on team
+            const bgGlow = document.getElementById('result-team-glow');
+            bgGlow.className = `absolute -top-32 -left-32 w-64 h-64 rounded-full blur-[100px] ${playerTeam === 'blue' ? 'bg-blue-500/30' : 'bg-red-500/30'}`;
+
+            saveDataToDB();
             window.changeScreen('screen-result');
         };
+
+        function saveDataToDB() {
+            const db = getDB();
+            // Record player logic: sort mainly by score (desc), then time (asc)
+            db.players.push({
+                name: userProfile.name,
+                team: playerTeam,
+                score: score,
+                time: parseFloat(totalTimeTaken.toFixed(2)),
+                timestamp: Date.now()
+            });
+            
+            // Add to team total score
+            if(playerTeam === 'blue') db.teamBlueScore += score;
+            if(playerTeam === 'red') db.teamRedScore += score;
+            
+            saveDB(db);
+        }
 
         window.resetToLobby = function() {
             window.changeScreen('screen-lobby');
         };
 
+        // --- Admin Dashboard Logic ---
         window.showLeaderboard = function() {
-            alert("ระบบ Ranking ข้อมูล ID: " + DATA_ID);
+            renderLeaderboard();
+            window.changeScreen('screen-ranking');
         };
+
+        function renderLeaderboard() {
+            const db = getDB();
+            
+            // Update Team Score
+            document.getElementById('rank-team-blue').innerText = db.teamBlueScore;
+            document.getElementById('rank-team-red').innerText = db.teamRedScore;
+
+            // Sort Players (Score DESC, Time ASC)
+            const sortedPlayers = db.players.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return a.time - b.time;
+            });
+
+            const tbody = document.getElementById('ranking-tbody');
+            tbody.innerHTML = '';
+
+            if(sortedPlayers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">ยังไม่มีข้อมูลผู้เล่น</td></tr>`;
+                return;
+            }
+
+            sortedPlayers.forEach((p, index) => {
+                const teamStyle = p.team === 'blue' 
+                    ? '<span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-1 rounded text-xs font-bold uppercase">Blue</span>'
+                    : '<span class="bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-1 rounded text-xs font-bold uppercase">Red</span>';
+                
+                let rankTpl = `<span class="text-slate-400">${index + 1}</span>`;
+                if(index === 0) rankTpl = `👑 <span class="text-yellow-400 font-bold">1</span>`;
+                if(index === 1) rankTpl = `<span class="text-slate-300 font-bold">2</span>`;
+                if(index === 2) rankTpl = `<span class="text-amber-600 font-bold">3</span>`;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-4 pl-6">${rankTpl}</td>
+                    <td class="p-4 font-medium text-white">${p.name}</td>
+                    <td class="p-4 text-center">${teamStyle}</td>
+                    <td class="p-4 text-center font-bold text-green-400">${p.score}</td>
+                    <td class="p-4 pr-6 text-right font-mono text-slate-300">${p.time.toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
     </script>
 </body>
 </html>
